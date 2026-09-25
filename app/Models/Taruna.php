@@ -16,7 +16,7 @@ class Taruna extends Model
         'kuota_jam_terbang' => 0.00,
         'sisa_kuota_jam_terbang' => 0.00,
         'max_jam_terbang_harian' => 4.00,
-        'status' => 'aktif',
+        'status' => 'active',
     ];
 
     protected $fillable = [

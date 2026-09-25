@@ -17,32 +17,39 @@ class RuteAreaLatihansTable
         return $table
             ->columns([
                 TextColumn::make('kode_rute')
-                    ->label('Kode')
+                    ->label('Route Code')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('nama_rute')
-                    ->label('Nama Rute / Area')
+                    ->label('Route / Training Area Name')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('kategori')
-                    ->label('Kategori')
+                    ->label('Category')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'Area Latihan Lokal' => 'Local Training Area',
+                        'Sirkuit Lokal' => 'Local Circuit',
+                        'Navigasi Cross Country' => 'Cross Country Navigation',
+                        default => $state,
+                    })
                     ->color(fn (string $state): string => match ($state) {
-                        'Area Latihan Lokal' => 'info',
-                        'Sirkuit Lokal' => 'success',
-                        'Navigasi Cross Country' => 'warning',
+                        'Area Latihan Lokal', 'Local Training Area' => 'info',
+                        'Sirkuit Lokal', 'Local Circuit' => 'success',
+                        'Navigasi Cross Country', 'Cross Country Navigation' => 'warning',
                         default => 'gray',
                     })
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('estimasi_durasi_jam')
-                    ->label('Durasi (Jam)')
+                    ->label('Estimated Duration (Hours)')
                     ->numeric()
                     ->sortable(),
                 IconColumn::make('is_active')
-                    ->label('Aktif')
+                    ->label('Active')
                     ->boolean(),
                 TextColumn::make('created_at')
+                    ->label('Created At')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

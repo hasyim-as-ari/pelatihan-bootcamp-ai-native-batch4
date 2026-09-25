@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
             FlightLogSeeder::class,
             PengajuanRescheduleSeeder::class,
             NotifikasiSeeder::class,
+            ActivityLogSeeder::class,
         ]);
     }
 }

@@ -19,9 +19,15 @@ class RuteAreaLatihanResource extends Resource
 {
     protected static ?string $model = RuteAreaLatihan::class;
 
-    protected static ?string $pluralModelLabel = 'Rute Area Latihan';
+    protected static ?string $slug = 'training-routes';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Data Master';
+    protected static ?string $modelLabel = 'Training Route';
+
+    protected static ?string $pluralModelLabel = 'Training Routes';
+
+    protected static ?string $navigationLabel = 'Training Routes';
+
+    protected static string | \UnitEnum | null $navigationGroup = 'Master Data';
     protected static ?int $navigationSort = 5;
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-map-pin';
 

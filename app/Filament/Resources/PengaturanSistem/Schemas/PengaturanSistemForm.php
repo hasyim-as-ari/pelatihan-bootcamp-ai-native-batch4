@@ -13,17 +13,22 @@ class PengaturanSistemForm
         return $schema
             ->components([
                 TextInput::make('kunci')
+                    ->label('Setting Key')
                     ->required(),
                 Textarea::make('nilai')
+                    ->label('Setting Value')
                     ->required()
                     ->columnSpanFull(),
                 TextInput::make('tipe_data')
+                    ->label('Data Type')
                     ->required()
                     ->default('string'),
                 TextInput::make('grup')
+                    ->label('Group')
                     ->required()
-                    ->default('umum'),
+                    ->default('general'),
                 TextInput::make('deskripsi')
+                    ->label('Description')
                     ->default(null),
             ]);
     }

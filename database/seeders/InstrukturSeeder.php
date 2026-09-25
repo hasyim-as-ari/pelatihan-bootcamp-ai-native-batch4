@@ -23,7 +23,7 @@ class InstrukturSeeder extends Seeder
                 'lisensi' => 'ATPL',
                 'max_jam_terbang_harian' => 8.00,
                 'total_jam_terbang' => 4500.50,
-                'status' => 'aktif',
+                'status' => 'active',
             ],
             [
                 'email' => 'capt.rina@api-banyuwangi.ac.id',
@@ -33,7 +33,7 @@ class InstrukturSeeder extends Seeder
                 'lisensi' => 'CPL',
                 'max_jam_terbang_harian' => 8.00,
                 'total_jam_terbang' => 3200.75,
-                'status' => 'aktif',
+                'status' => 'active',
             ],
             [
                 'email' => 'capt.hendra@api-banyuwangi.ac.id',
@@ -43,7 +43,7 @@ class InstrukturSeeder extends Seeder
                 'lisensi' => 'ATPL',
                 'max_jam_terbang_harian' => 8.00,
                 'total_jam_terbang' => 5100.00,
-                'status' => 'aktif',
+                'status' => 'active',
             ],
             [
                 'email' => 'capt.dewi@api-banyuwangi.ac.id',
@@ -53,7 +53,7 @@ class InstrukturSeeder extends Seeder
                 'lisensi' => 'CPL',
                 'max_jam_terbang_harian' => 8.00,
                 'total_jam_terbang' => 2800.25,
-                'status' => 'aktif',
+                'status' => 'active',
             ],
             [
                 'email' => 'capt.agus@api-banyuwangi.ac.id',

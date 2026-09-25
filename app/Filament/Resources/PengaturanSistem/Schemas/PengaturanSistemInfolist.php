@@ -11,17 +11,26 @@ class PengaturanSistemInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('kunci'),
+                TextEntry::make('kunci')
+                    ->label('Setting Key'),
                 TextEntry::make('nilai')
+                    ->label('Setting Value')
                     ->columnSpanFull(),
-                TextEntry::make('tipe_data'),
-                TextEntry::make('grup'),
+                TextEntry::make('tipe_data')
+                    ->label('Data Type')
+                    ->badge(),
+                TextEntry::make('grup')
+                    ->label('Group')
+                    ->badge(),
                 TextEntry::make('deskripsi')
+                    ->label('Description')
                     ->placeholder('-'),
                 TextEntry::make('created_at')
+                    ->label('Created At')
                     ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('updated_at')
+                    ->label('Updated At')
                     ->dateTime()
                     ->placeholder('-'),
             ]);

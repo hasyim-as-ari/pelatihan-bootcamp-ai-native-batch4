@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('lisensi')->nullable()->comment('Jenis lisensi pilot: CPL, ATPL, dll');
             $table->decimal('max_jam_terbang_harian', 5, 2)->default(8.00)->comment('Batasan jam terbang harian sesuai regulasi DGCA/DKPPU');
             $table->decimal('total_jam_terbang', 10, 2)->default(0)->comment('Akumulasi total jam terbang instruktur');
-            $table->enum('status', ['aktif', 'cuti', 'nonaktif'])->default('aktif');
+            $table->enum('status', ['active', 'leave', 'inactive', 'aktif', 'cuti', 'nonaktif'])->default('active');
             $table->text('catatan')->nullable();
             $table->timestamps();
         });

@@ -27,7 +27,7 @@ return new class extends Migration
             $table->decimal('kuota_jam_terbang', 10, 2)->default(0)->comment('Total kuota jam terbang yang dimiliki taruna');
             $table->decimal('sisa_kuota_jam_terbang', 10, 2)->default(0)->comment('Sisa kuota jam terbang yang belum terpakai');
             $table->decimal('max_jam_terbang_harian', 5, 2)->default(4.00)->comment('Batasan jam terbang harian taruna sesuai regulasi');
-            $table->enum('status', ['aktif', 'cuti', 'lulus', 'nonaktif'])->default('aktif');
+            $table->enum('status', ['active', 'leave', 'graduated', 'inactive', 'aktif', 'cuti', 'lulus', 'nonaktif'])->default('active');
             $table->text('catatan')->nullable();
             $table->timestamps();
         });

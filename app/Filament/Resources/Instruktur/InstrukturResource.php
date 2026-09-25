@@ -20,9 +20,15 @@ class InstrukturResource extends Resource
 {
     protected static ?string $model = Instruktur::class;
 
-    protected static ?string $pluralModelLabel = 'Instruktur';
+    protected static ?string $slug = 'instructors';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Data Master';
+    protected static ?string $modelLabel = 'Instructor';
+
+    protected static ?string $pluralModelLabel = 'Instructors';
+
+    protected static ?string $navigationLabel = 'Instructors';
+
+    protected static string | \UnitEnum | null $navigationGroup = 'Master Data';
     protected static ?int $navigationSort = 1;
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-academic-cap';
 

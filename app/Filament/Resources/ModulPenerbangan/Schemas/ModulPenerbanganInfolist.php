@@ -13,29 +13,31 @@ class ModulPenerbanganInfolist
         return $schema
             ->components([
                 TextEntry::make('kode_modul')
-                    ->label('Kode Modul')
+                    ->label('Module Code')
                     ->placeholder('-'),
                 TextEntry::make('nama_modul')
-                    ->label('Nama Modul'),
+                    ->label('Flight Module Name'),
                 TextEntry::make('lisensi_target')
-                    ->label('Lisensi Target')
+                    ->label('License Target')
                     ->badge(),
                 TextEntry::make('kategori')
-                    ->label('Kategori')
+                    ->label('Category')
                     ->placeholder('-'),
                 TextEntry::make('standar_jam_terbang')
-                    ->label('Standar Jam Terbang (Jam)'),
+                    ->label('Standard Flight Hours (Hours)'),
                 IconEntry::make('is_active')
-                    ->label('Aktif')
+                    ->label('Active')
                     ->boolean(),
                 TextEntry::make('deskripsi')
-                    ->label('Silabus / Sasaran Pelatihan')
+                    ->label('Syllabus / Training Objectives')
                     ->placeholder('-')
                     ->columnSpanFull(),
                 TextEntry::make('created_at')
+                    ->label('Created At')
                     ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('updated_at')
+                    ->label('Updated At')
                     ->dateTime()
                     ->placeholder('-'),
             ]);

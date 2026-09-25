@@ -20,9 +20,15 @@ class JadwalPenerbanganResource extends Resource
 {
     protected static ?string $model = JadwalPenerbangan::class;
 
-    protected static ?string $pluralModelLabel = 'Jadwal Penerbangan';
+    protected static ?string $slug = 'flight-schedules';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Operasional Penerbangan';
+    protected static ?string $modelLabel = 'Flight Schedule';
+
+    protected static ?string $pluralModelLabel = 'Flight Schedules';
+
+    protected static ?string $navigationLabel = 'Flight Schedules';
+
+    protected static string | \UnitEnum | null $navigationGroup = 'Flight Operations';
     protected static ?int $navigationSort = 1;
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-calendar-days';
 

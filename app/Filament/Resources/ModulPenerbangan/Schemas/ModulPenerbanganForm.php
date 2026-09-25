@@ -15,15 +15,15 @@ class ModulPenerbanganForm
         return $schema
             ->components([
                 TextInput::make('kode_modul')
-                    ->label('Kode Modul')
-                    ->placeholder('Contoh: PPL-TP-01, CPL-XC-02')
+                    ->label('Module Code')
+                    ->placeholder('e.g., PPL-TP-01, CPL-XC-02')
                     ->unique(ignoreRecord: true),
                 TextInput::make('nama_modul')
-                    ->label('Nama Modul Penerbangan')
+                    ->label('Flight Module Name')
                     ->required()
-                    ->placeholder('Contoh: Traffic Pattern, Touch and Go'),
+                    ->placeholder('e.g., Traffic Pattern, Touch and Go'),
                 Select::make('lisensi_target')
-                    ->label('Lisensi Target')
+                    ->label('License Target')
                     ->options([
                         'PPL' => 'PPL (Private Pilot License)',
                         'CPL' => 'CPL (Commercial Pilot License)',
@@ -33,19 +33,19 @@ class ModulPenerbanganForm
                     ->default('PPL')
                     ->required(),
                 TextInput::make('kategori')
-                    ->label('Kategori Manuver')
-                    ->placeholder('Contoh: Manuver Dasar, Navigasi Visual, Prosedur Darurat'),
+                    ->label('Maneuver Category')
+                    ->placeholder('e.g., Basic Maneuvers, Visual Navigation, Emergency Procedures'),
                 TextInput::make('standar_jam_terbang')
-                    ->label('Standar Jam Terbang per Sesi')
+                    ->label('Standard Flight Hours per Session')
                     ->numeric()
                     ->default(1.50)
                     ->required(),
                 Textarea::make('deskripsi')
-                    ->label('Silabus / Sasaran Pelatihan')
-                    ->placeholder('Deskripsi latihan, syarat kelulusan modul, checklist evaluasi')
+                    ->label('Syllabus / Training Objectives')
+                    ->placeholder('Training description, module passing requirements, evaluation checklist')
                     ->columnSpanFull(),
                 Toggle::make('is_active')
-                    ->label('Status Aktif')
+                    ->label('Active Status')
                     ->default(true),
             ]);
     }

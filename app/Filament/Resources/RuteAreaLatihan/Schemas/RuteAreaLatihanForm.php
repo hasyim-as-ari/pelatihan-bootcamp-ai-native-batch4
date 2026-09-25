@@ -15,33 +15,36 @@ class RuteAreaLatihanForm
         return $schema
             ->components([
                 TextInput::make('kode_rute')
-                    ->label('Kode Rute')
-                    ->placeholder('Contoh: TRA-W1, XC-BWX-SUB')
+                    ->label('Route Code')
+                    ->placeholder('e.g., TRA-W1, XC-BWX-SUB')
                     ->unique(ignoreRecord: true),
                 TextInput::make('nama_rute')
-                    ->label('Nama Rute / Area Latihan')
+                    ->label('Route / Training Area Name')
                     ->required()
-                    ->placeholder('Contoh: Banyuwangi - Area Latihan Utara'),
+                    ->placeholder('e.g., Banyuwangi - North Training Area'),
                 Select::make('kategori')
-                    ->label('Kategori')
+                    ->label('Category')
                     ->options([
-                        'Area Latihan Lokal' => 'Area Latihan Lokal',
-                        'Sirkuit Lokal' => 'Sirkuit Lokal',
-                        'Navigasi Cross Country' => 'Navigasi Cross Country',
+                        'Local Training Area' => 'Local Training Area',
+                        'Local Circuit' => 'Local Circuit',
+                        'Cross Country Navigation' => 'Cross Country Navigation',
+                        'Area Latihan Lokal' => 'Local Training Area (Legacy)',
+                        'Sirkuit Lokal' => 'Local Circuit (Legacy)',
+                        'Navigasi Cross Country' => 'Cross Country Navigation (Legacy)',
                     ])
-                    ->default('Area Latihan Lokal')
+                    ->default('Local Training Area')
                     ->required(),
                 TextInput::make('estimasi_durasi_jam')
-                    ->label('Estimasi Durasi (Jam)')
+                    ->label('Estimated Duration (Hours)')
                     ->numeric()
                     ->default(1.50)
                     ->required(),
                 Textarea::make('deskripsi')
-                    ->label('Deskripsi / Area Latihan')
-                    ->placeholder('Penjelasan area latihan, batas ketinggian, atau koordinat')
+                    ->label('Description / Training Area Boundary')
+                    ->placeholder('Training area explanation, altitude limits, or airspace coordinates')
                     ->columnSpanFull(),
                 Toggle::make('is_active')
-                    ->label('Status Aktif')
+                    ->label('Active Status')
                     ->default(true),
             ]);
     }

@@ -20,9 +20,15 @@ class TarunaResource extends Resource
 {
     protected static ?string $model = Taruna::class;
 
-    protected static ?string $pluralModelLabel = 'Taruna';
+    protected static ?string $slug = 'students';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Data Master';
+    protected static ?string $modelLabel = 'Student';
+
+    protected static ?string $pluralModelLabel = 'Students';
+
+    protected static ?string $navigationLabel = 'Students';
+
+    protected static string | \UnitEnum | null $navigationGroup = 'Master Data';
     protected static ?int $navigationSort = 2;
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-users';
 
@@ -58,6 +64,3 @@ class TarunaResource extends Resource
         ];
     }
 }
-
-
-

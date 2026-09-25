@@ -20,9 +20,15 @@ class FlightLogResource extends Resource
 {
     protected static ?string $model = FlightLog::class;
 
-    protected static ?string $pluralModelLabel = 'Flight Log';
+    protected static ?string $slug = 'flight-logs';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Operasional Penerbangan';
+    protected static ?string $modelLabel = 'Flight Log';
+
+    protected static ?string $pluralModelLabel = 'Flight Logs';
+
+    protected static ?string $navigationLabel = 'Flight Logs';
+
+    protected static string | \UnitEnum | null $navigationGroup = 'Flight Operations';
     protected static ?int $navigationSort = 2;
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-clipboard-document-check';
 

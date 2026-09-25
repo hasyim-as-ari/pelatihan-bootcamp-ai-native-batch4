@@ -11,45 +11,62 @@ class JadwalPenerbanganInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('kode_jadwal'),
+                TextEntry::make('kode_jadwal')
+                    ->label('Schedule Code'),
                 TextEntry::make('tanggal')
-                    ->date(),
+                    ->label('Flight Date')
+                    ->date('M d, Y'),
                 TextEntry::make('jam_mulai')
-                    ->time(),
+                    ->label('Start Time')
+                    ->time('H:i'),
                 TextEntry::make('jam_selesai')
-                    ->time(),
+                    ->label('End Time')
+                    ->time('H:i'),
                 TextEntry::make('taruna.nama')
-                    ->label('Taruna'),
+                    ->label('Student / Cadet'),
                 TextEntry::make('instruktur.nama')
-                    ->label('Instruktur'),
+                    ->label('Flight Instructor'),
                 TextEntry::make('pesawat.nomor_registrasi')
-                    ->label('Pesawat'),
+                    ->label('Aircraft (Tail No.)'),
                 TextEntry::make('rute_area_latihan')
+                    ->label('Training Route / Area')
                     ->placeholder('-'),
                 TextEntry::make('modul_penerbangan')
+                    ->label('Flight Module')
                     ->placeholder('-'),
                 TextEntry::make('status')
-                    ->badge(),
+                    ->label('Status')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'draft' => 'Draft',
+                        'scheduled' => 'Scheduled',
+                        'in_flight' => 'In Flight',
+                        'completed' => 'Completed',
+                        'cancelled' => 'Cancelled',
+                        'rescheduled' => 'Rescheduled',
+                        default => ucfirst($state),
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'scheduled' => 'info',
+                        'in_flight' => 'warning',
+                        'completed' => 'success',
+                        'cancelled' => 'danger',
+                        'rescheduled' => 'primary',
+                        default => 'gray',
+                    }),
                 TextEntry::make('catatan')
+                    ->label('Flight Notes / Briefing')
                     ->placeholder('-')
                     ->columnSpanFull(),
-                TextEntry::make('created_by')
-                    ->numeric()
-                    ->placeholder('-'),
-                TextEntry::make('approved_by')
-                    ->numeric()
-                    ->placeholder('-'),
-                TextEntry::make('published_at')
-                    ->dateTime()
-                    ->placeholder('-'),
                 TextEntry::make('created_at')
+                    ->label('Created At')
                     ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('updated_at')
+                    ->label('Updated At')
                     ->dateTime()
                     ->placeholder('-'),
             ]);
     }
 }
-
-

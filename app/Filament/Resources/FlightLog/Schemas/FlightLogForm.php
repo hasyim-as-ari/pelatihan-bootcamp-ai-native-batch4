@@ -16,41 +16,63 @@ class FlightLogForm
         return $schema
             ->components([
                 Select::make('jadwal_penerbangan_id')
+                    ->label('Flight Schedule')
                     ->relationship('jadwalPenerbangan', 'kode_jadwal')
                     ->required(),
                 Select::make('taruna_id')
+                    ->label('Student / Cadet')
                     ->relationship('taruna', 'nama')
                     ->required(),
                 Select::make('instruktur_id')
+                    ->label('Flight Instructor')
                     ->relationship('instruktur', 'nama')
                     ->required(),
                 Select::make('pesawat_id')
+                    ->label('Aircraft')
                     ->relationship('pesawat', 'nomor_registrasi')
                     ->required(),
                 DatePicker::make('tanggal')
+                    ->label('Flight Date')
                     ->required(),
-                TimePicker::make('jam_takeoff'),
-                TimePicker::make('jam_landing'),
+                TimePicker::make('jam_takeoff')
+                    ->label('Takeoff Time'),
+                TimePicker::make('jam_landing')
+                    ->label('Landing Time'),
                 TextInput::make('durasi_terbang')
+                    ->label('Flight Duration (Hours)')
                     ->required()
                     ->numeric()
                     ->default(0.0),
                 Select::make('status')
-                    ->options(['in_progress' => 'In progress', 'completed' => 'Completed', 'cancelled' => 'Cancelled'])
+                    ->label('Status')
+                    ->options([
+                        'in_progress' => 'In Progress',
+                        'completed' => 'Completed',
+                        'cancelled' => 'Cancelled',
+                    ])
                     ->default('in_progress')
                     ->required(),
                 Textarea::make('catatan_evaluasi')
+                    ->label('Evaluation Notes')
                     ->default(null)
                     ->columnSpanFull(),
                 TextInput::make('nilai')
+                    ->label('Score')
                     ->numeric()
                     ->default(null),
                 Select::make('hasil_evaluasi')
-                    ->options(['lulus' => 'Lulus', 'tidak_lulus' => 'Tidak lulus', 'perlu_pengulangan' => 'Perlu pengulangan'])
+                    ->label('Evaluation Result')
+                    ->options([
+                        'lulus' => 'Pass',
+                        'tidak_lulus' => 'Fail',
+                        'perlu_pengulangan' => 'Retake Required',
+                    ])
                     ->default(null),
                 TextInput::make('kondisi_cuaca')
+                    ->label('Weather Condition')
                     ->default(null),
                 TextInput::make('recorded_by')
+                    ->label('Recorded By (User ID)')
                     ->numeric()
                     ->default(null),
             ]);

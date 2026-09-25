@@ -17,15 +17,15 @@ class ModulPenerbangansTable
         return $table
             ->columns([
                 TextColumn::make('kode_modul')
-                    ->label('Kode')
+                    ->label('Module Code')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('nama_modul')
-                    ->label('Nama Modul')
+                    ->label('Module Name')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('lisensi_target')
-                    ->label('Lisensi')
+                    ->label('License Target')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'PPL' => 'info',
@@ -37,17 +37,18 @@ class ModulPenerbangansTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('kategori')
-                    ->label('Kategori')
+                    ->label('Category')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('standar_jam_terbang')
-                    ->label('Standar Jam')
+                    ->label('Standard Flight Hours')
                     ->numeric()
                     ->sortable(),
                 IconColumn::make('is_active')
-                    ->label('Aktif')
+                    ->label('Active')
                     ->boolean(),
                 TextColumn::make('created_at')
+                    ->label('Created At')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -20,9 +20,15 @@ class SlotWaktuResource extends Resource
 {
     protected static ?string $model = SlotWaktu::class;
 
-    protected static ?string $pluralModelLabel = 'Slot Waktu';
+    protected static ?string $slug = 'time-slots';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Data Master';
+    protected static ?string $modelLabel = 'Time Slot';
+
+    protected static ?string $pluralModelLabel = 'Time Slots';
+
+    protected static ?string $navigationLabel = 'Time Slots';
+
+    protected static string | \UnitEnum | null $navigationGroup = 'Master Data';
     protected static ?int $navigationSort = 4;
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-clock';
 

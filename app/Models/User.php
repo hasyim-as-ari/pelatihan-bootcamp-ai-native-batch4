@@ -76,6 +76,14 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * Log aktivitas milik user
+     */
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class, 'user_id');
+    }
+
+    /**
      * Cek apakah user adalah Super Admin
      */
     public function isSuperAdmin(): bool
@@ -122,11 +130,11 @@ class User extends Authenticatable implements FilamentUser
     {
         return match ($this->role) {
             'super_admin' => 'Super Admin',
-            'admin_operasional' => 'Admin Operasional',
-            'instruktur' => 'Instruktur Penerbang',
-            'taruna' => 'Taruna',
-            'pimpinan' => 'Pimpinan',
-            default => 'Unknown',
+            'admin_operasional' => 'Flight Operations Admin',
+            'instruktur' => 'Flight Instructor',
+            'taruna' => 'Student / Cadet',
+            'pimpinan' => 'Leadership / Director',
+            default => 'User',
         };
     }
 }

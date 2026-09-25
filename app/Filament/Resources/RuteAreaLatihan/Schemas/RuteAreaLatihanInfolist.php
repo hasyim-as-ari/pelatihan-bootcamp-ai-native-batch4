@@ -13,26 +13,34 @@ class RuteAreaLatihanInfolist
         return $schema
             ->components([
                 TextEntry::make('kode_rute')
-                    ->label('Kode Rute')
+                    ->label('Route Code')
                     ->placeholder('-'),
                 TextEntry::make('nama_rute')
-                    ->label('Nama Rute'),
+                    ->label('Route / Training Area Name'),
                 TextEntry::make('kategori')
-                    ->label('Kategori')
-                    ->badge(),
+                    ->label('Category')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'Area Latihan Lokal' => 'Local Training Area',
+                        'Sirkuit Lokal' => 'Local Circuit',
+                        'Navigasi Cross Country' => 'Cross Country Navigation',
+                        default => $state,
+                    }),
                 TextEntry::make('estimasi_durasi_jam')
-                    ->label('Estimasi Durasi (Jam)'),
+                    ->label('Estimated Duration (Hours)'),
                 IconEntry::make('is_active')
-                    ->label('Aktif')
+                    ->label('Active')
                     ->boolean(),
                 TextEntry::make('deskripsi')
-                    ->label('Deskripsi')
+                    ->label('Description')
                     ->placeholder('-')
                     ->columnSpanFull(),
                 TextEntry::make('created_at')
+                    ->label('Created At')
                     ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('updated_at')
+                    ->label('Updated At')
                     ->dateTime()
                     ->placeholder('-'),
             ]);

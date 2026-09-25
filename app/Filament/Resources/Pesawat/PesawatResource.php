@@ -20,9 +20,15 @@ class PesawatResource extends Resource
 {
     protected static ?string $model = Pesawat::class;
 
-    protected static ?string $pluralModelLabel = 'Pesawat';
+    protected static ?string $slug = 'aircraft';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Data Master';
+    protected static ?string $modelLabel = 'Aircraft';
+
+    protected static ?string $pluralModelLabel = 'Aircraft Fleet';
+
+    protected static ?string $navigationLabel = 'Aircraft Fleet';
+
+    protected static string | \UnitEnum | null $navigationGroup = 'Master Data';
     protected static ?int $navigationSort = 3;
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-paper-airplane';
 
@@ -58,6 +64,3 @@ class PesawatResource extends Resource
         ];
     }
 }
-
-
-

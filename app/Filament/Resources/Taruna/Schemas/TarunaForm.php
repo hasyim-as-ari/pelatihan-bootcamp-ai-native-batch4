@@ -16,60 +16,60 @@ class TarunaForm
         return $schema
             ->components([
                 Select::make('user_id')
-                    ->label('Akun Pengguna (User)')
+                    ->label('Associated User Account')
                     ->relationship('user', 'name')
                     ->getOptionLabelFromRecordUsing(fn (User $record) => "{$record->name} ({$record->email})")
                     ->searchable()
                     ->preload()
                     ->required()
-                    ->helperText('Akun login yang terhubung dengan taruna ini'),
+                    ->helperText('Login account linked to this student / cadet'),
 
                 TextInput::make('nim')
-                    ->label('NIM (Nomor Induk Mahasiswa)')
-                    ->placeholder('Contoh: TRN-2024-001')
+                    ->label('Student ID (NIM)')
+                    ->placeholder('e.g. TRN-2024-001')
                     ->unique(ignoreRecord: true)
                     ->required(),
 
                 TextInput::make('nama')
-                    ->label('Nama Lengkap')
-                    ->placeholder('Nama lengkap taruna')
+                    ->label('Full Name')
+                    ->placeholder('e.g. Muhammad Rizky Pratama')
                     ->required(),
 
                 TextInput::make('no_telepon')
-                    ->label('Nomor Telepon / WhatsApp')
+                    ->label('Phone Number / WhatsApp')
                     ->tel()
-                    ->placeholder('Contoh: 081234567890')
+                    ->placeholder('e.g. +62 812-3456-7890')
                     ->default(null),
 
                 TextInput::make('angkatan')
-                    ->label('Angkatan')
-                    ->placeholder('Contoh: 2024')
+                    ->label('Class Year / Intake')
+                    ->placeholder('e.g. 2024')
                     ->default(fn () => date('Y')),
 
                 TextInput::make('batch')
                     ->label('Batch')
                     ->numeric()
-                    ->placeholder('Contoh: 1, 2, 3')
-                    ->helperText('Nomor rombongan belajar/batch (1, 2, 3 dst)'),
+                    ->placeholder('e.g. 100, 101, 102')
+                    ->helperText('Cadet flight training batch number'),
 
                 TextInput::make('status_batch')
-                    ->label('Status Batch')
-                    ->placeholder('Contoh: A, B, C')
-                    ->helperText('Status kelas batch (A, B, C dst)')
+                    ->label('Batch Section / Subgroup')
+                    ->placeholder('e.g. A, B, C')
+                    ->helperText('Class section/subgroup (A, B, C etc.)')
                     ->maxLength(10),
 
                 TextInput::make('program_study')
-                    ->label('Program Study')
-                    ->placeholder('Contoh: D4 Penerbang Sayap Tetap')
+                    ->label('Study Program')
+                    ->placeholder('e.g. D4 Fixed-Wing Commercial Pilot')
                     ->datalist([
-                        'D4 Penerbang Sayap Tetap',
-                        'D3 Operasi Pesawat Udara',
-                        'D3 Penerbang Sayap Putar',
-                        'Non-Diploma Penerbang',
+                        'D4 Fixed-Wing Commercial Pilot',
+                        'D3 Rotary-Wing Helicopter Pilot',
+                        'D3 Flight Operations',
+                        'Non-Diploma Commercial Pilot',
                     ]),
 
                 Select::make('modulPenerbangan')
-                    ->label('Modul Penerbangan (1 Siswa dapat 1 atau lebih)')
+                    ->label('Flight Training Modules (Select 1 or more)')
                     ->relationship(
                         name: 'modulPenerbangan',
                         titleAttribute: 'nama_modul',
@@ -79,30 +79,34 @@ class TarunaForm
                     ->multiple()
                     ->preload()
                     ->searchable()
-                    ->placeholder('-- Pilih 1 atau Lebih Modul Penerbangan --')
-                    ->helperText('Pilih satu atau lebih modul silabus pelatihan terbang yang diikuti taruna')
+                    ->placeholder('-- Select One or More Flight Modules --')
+                    ->helperText('Select syllabus training modules assigned to this student')
                     ->columnSpanFull(),
 
                 TextInput::make('total_jam_terbang')
-                    ->label('Total Jam Terbang (Awal)')
+                    ->label('Initial Flight Hours')
                     ->numeric()
                     ->default(0.0)
-                    ->helperText('Jam terbang awal taruna jika ada (default 0.0)'),
+                    ->helperText('Initial accumulated flight hours (default: 0.0)'),
 
                 Select::make('status')
-                    ->label('Status Keaktifan')
+                    ->label('Enrollment Status')
                     ->options([
-                        'aktif' => 'Aktif',
-                        'cuti' => 'Cuti',
-                        'lulus' => 'Lulus',
-                        'nonaktif' => 'Nonaktif',
+                        'active' => 'Active',
+                        'leave' => 'On Leave',
+                        'graduated' => 'Graduated',
+                        'inactive' => 'Inactive',
+                        'aktif' => 'Active',
+                        'cuti' => 'On Leave',
+                        'lulus' => 'Graduated',
+                        'nonaktif' => 'Inactive',
                     ])
-                    ->default('aktif')
+                    ->default('active')
                     ->required(),
 
                 Textarea::make('catatan')
-                    ->label('Catatan Taruna')
-                    ->placeholder('Catatan riwayat, instruksi pelatihan khusus, atau informasi lainnya')
+                    ->label('Notes / Remarks')
+                    ->placeholder('Special instructions, medical limitations, or academic notes')
                     ->default(null)
                     ->columnSpanFull(),
             ]);

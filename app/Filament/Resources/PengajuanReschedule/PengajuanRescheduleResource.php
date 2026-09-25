@@ -20,9 +20,15 @@ class PengajuanRescheduleResource extends Resource
 {
     protected static ?string $model = PengajuanReschedule::class;
 
-    protected static ?string $pluralModelLabel = 'Pengajuan Reschedule';
+    protected static ?string $slug = 'reschedule-requests';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Operasional Penerbangan';
+    protected static ?string $modelLabel = 'Reschedule Request';
+
+    protected static ?string $pluralModelLabel = 'Reschedule Requests';
+
+    protected static ?string $navigationLabel = 'Reschedule Requests';
+
+    protected static string | \UnitEnum | null $navigationGroup = 'Flight Operations';
     protected static ?int $navigationSort = 3;
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-arrow-path';
 

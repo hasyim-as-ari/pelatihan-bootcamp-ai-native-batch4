@@ -10,6 +10,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -27,10 +28,22 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login() // Menggunakan halaman login bawaan, tanpa registrasi & forgot password
-            ->brandName('API Banyuwangi')
+            ->login(\App\Filament\Pages\Auth\Login::class)
+            ->brandName('FOAMS - API Banyuwangi')
+            ->favicon(asset('images/logo/logo_api.png'))
+            ->brandLogo(fn () => view('filament.components.brand-logo'))
+            ->brandLogoHeight('2.4rem')
+            ->darkMode(false)
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn () => view('filament.components.theme-styles')
+            )
+            ->renderHook(
+                PanelsRenderHook::SIDEBAR_FOOTER,
+                fn () => view('filament.components.sidebar-logout')
+            )
             ->colors([
-                'primary' => Color::Sky,
+                'primary' => Color::hex('#0066ee'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
