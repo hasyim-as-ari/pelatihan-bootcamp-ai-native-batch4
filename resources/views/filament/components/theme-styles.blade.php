@@ -157,8 +157,56 @@
         color: #ffffff !important;
     }
 
-    .fi-topbar .fi-user-avatar {
-        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35) !important;
+    /* Replace "SA" avatar img with a clean user SVG icon */
+    .fi-topbar .fi-user-menu-trigger .fi-user-avatar,
+    .fi-topbar .fi-user-menu button .fi-user-avatar {
+        /* Hide the actual img (initials from UiAvatars) */
+        opacity: 0 !important;
+        width: 0 !important;
+        height: 0 !important;
+        position: absolute !important;
+        pointer-events: none !important;
+    }
+
+    /* The trigger button itself becomes our styled user icon button */
+    .fi-topbar .fi-user-menu-trigger {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 50% !important;
+        background: rgba(255, 255, 255, 0.18) !important;
+        border: 2px solid rgba(255, 255, 255, 0.35) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18) !important;
+        transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease !important;
+        cursor: pointer !important;
+        position: relative !important;
+        overflow: visible !important;
+    }
+
+    .fi-topbar .fi-user-menu-trigger:hover {
+        background: rgba(255, 255, 255, 0.28) !important;
+        border-color: rgba(255, 255, 255, 0.55) !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22) !important;
+    }
+
+    /* Inject SVG user icon using CSS pseudo-element */
+    .fi-topbar .fi-user-menu-trigger::after {
+        content: '';
+        display: block !important;
+        width: 22px !important;
+        height: 22px !important;
+        flex-shrink: 0 !important;
+        background-color: #ffffff !important;
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E") !important;
+        -webkit-mask-size: contain !important;
+        -webkit-mask-repeat: no-repeat !important;
+        -webkit-mask-position: center !important;
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E") !important;
+        mask-size: contain !important;
+        mask-repeat: no-repeat !important;
+        mask-position: center !important;
     }
 
     /* 11. SIDEBAR SCROLLBAR */

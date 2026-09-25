@@ -6,6 +6,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -42,6 +43,10 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::SIDEBAR_FOOTER,
                 fn () => view('filament.components.sidebar-logout')
             )
+            ->renderHook(
+                PanelsRenderHook::TOPBAR_LOGO_AFTER,
+                fn () => view('filament.components.topbar-clock')
+            )
             ->colors([
                 'primary' => Color::hex('#0066ee'),
             ])
@@ -49,6 +54,32 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,
+            ])
+            ->navigationGroups([
+                NavigationGroup::make('Master Data')
+                    ->label('Master Data')
+                    ->collapsible()
+                    ->collapsed(false),
+
+                NavigationGroup::make('Flight Scheduling')
+                    ->label('Flight Scheduling')
+                    ->collapsible()
+                    ->collapsed(false),
+
+                NavigationGroup::make('Flight Operations')
+                    ->label('Flight Operations')
+                    ->collapsible()
+                    ->collapsed(false),
+
+                NavigationGroup::make('Reports & History')
+                    ->label('Reports & History')
+                    ->collapsible()
+                    ->collapsed(false),
+
+                NavigationGroup::make('Settings')
+                    ->label('Settings')
+                    ->collapsible()
+                    ->collapsed(true),
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([

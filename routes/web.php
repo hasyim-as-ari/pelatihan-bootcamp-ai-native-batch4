@@ -1,9 +1,18 @@
 <?php
 
+use App\Http\Controllers\FlightHoursExportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+// Flight Hours Export Routes (protected by auth)
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/export/flight-hours/excel', [FlightHoursExportController::class, 'excel'])
+        ->name('flight-hours.export.excel');
+    Route::get('/export/flight-hours/pdf', [FlightHoursExportController::class, 'pdf'])
+        ->name('flight-hours.export.pdf');
 });
 
 // Legacy Indonesian URL redirects to new English URLs

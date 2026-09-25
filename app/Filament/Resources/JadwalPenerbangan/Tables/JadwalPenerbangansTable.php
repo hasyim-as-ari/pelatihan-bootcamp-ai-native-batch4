@@ -8,6 +8,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
@@ -114,6 +115,17 @@ class JadwalPenerbangansTable
                         ->pluck('batch', 'batch')
                         ->toArray()
                     )
+                    ->modifyFormFieldUsing(fn (Select $field) => $field
+                        ->live()
+                        ->afterStateUpdated(function ($state, $livewire) {
+                            if (isset($livewire->tableDeferredFilters['taruna_id'])) {
+                                $livewire->tableDeferredFilters['taruna_id']['value'] = null;
+                            }
+                            if (isset($livewire->tableFilters['taruna_id'])) {
+                                $livewire->tableFilters['taruna_id']['value'] = null;
+                            }
+                        })
+                    )
                     ->query(function (Builder $query, array $data) {
                         if (filled($data['value'] ?? null)) {
                             $query->whereHas('taruna', fn (Builder $q) => $q->where('batch', $data['value']));
@@ -125,16 +137,51 @@ class JadwalPenerbangansTable
                 SelectFilter::make('taruna_id')
                     ->label('SELECT STUDENT')
                     ->placeholder('SELECT STUDENT')
-                    ->options(function ($livewire) {
-                        $selectedBatch = $livewire->tableFilters['batch']['value'] ?? null;
-                        $query = Taruna::query()->orderBy('nama');
-                        if (filled($selectedBatch)) {
-                            $query->where('batch', $selectedBatch);
+                    ->options(function ($livewire = null) {
+                        $selectedBatch = null;
+
+                        if ($livewire) {
+                            $selectedBatch = $livewire->tableDeferredFilters['batch']['value']
+                                ?? $livewire->tableFilters['batch']['value']
+                                ?? null;
                         }
-                        return $query->get()->mapWithKeys(fn (Taruna $t) => [
-                            $t->id => $t->nama . ($t->batch ? " (Batch {$t->batch})" : ""),
-                        ])->toArray();
+
+                        // Sebelum select batch dipilih, tidak tampil siswa (kosong)
+                        if (blank($selectedBatch)) {
+                            return [];
+                        }
+
+                        return Taruna::where('batch', $selectedBatch)
+                            ->orderBy('nama')
+                            ->get()
+                            ->mapWithKeys(fn (Taruna $t) => [
+                                $t->id => $t->nama . ($t->batch ? " (Batch {$t->batch})" : ""),
+                            ])
+                            ->toArray();
                     })
+                    ->modifyFormFieldUsing(fn (Select $field) => $field
+                        ->options(function ($livewire = null) {
+                            $selectedBatch = null;
+
+                            if ($livewire) {
+                                $selectedBatch = $livewire->tableDeferredFilters['batch']['value']
+                                    ?? $livewire->tableFilters['batch']['value']
+                                    ?? null;
+                            }
+
+                            if (blank($selectedBatch)) {
+                                return [];
+                            }
+
+                            return Taruna::where('batch', $selectedBatch)
+                                ->orderBy('nama')
+                                ->get()
+                                ->mapWithKeys(fn (Taruna $t) => [
+                                    $t->id => $t->nama . ($t->batch ? " (Batch {$t->batch})" : ""),
+                                ])
+                                ->toArray();
+                        })
+                    )
                     ->query(function (Builder $query, array $data) {
                         if (filled($data['value'] ?? null)) {
                             $query->where('taruna_id', $data['value']);
@@ -144,7 +191,7 @@ class JadwalPenerbangansTable
                     ->preload(),
 
                 SelectFilter::make('status')
-                    ->label('Status')
+                    ->label('STATUS')
                     ->options([
                         'scheduled' => 'Scheduled',
                         'in_flight' => 'In Flight',

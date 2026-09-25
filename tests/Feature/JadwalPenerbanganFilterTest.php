@@ -165,4 +165,60 @@ class JadwalPenerbanganFilterTest extends TestCase
             ->assertCanSeeTableRecords([$jadwal1])
             ->assertCanNotSeeTableRecords([$jadwal2]);
     }
+
+    public function test_student_filter_options_are_empty_before_batch_is_selected(): void
+    {
+        $user = User::factory()->create(['role' => 'super_admin']);
+        $this->actingAs($user);
+
+        $tarunaUser = User::factory()->create(['role' => 'taruna']);
+        Taruna::create([
+            'user_id' => $tarunaUser->id,
+            'nim' => 'TRN-OP-1',
+            'nama' => 'Student In Batch',
+            'batch' => 100,
+            'status' => 'active',
+        ]);
+
+        $test = Livewire::test(ListJadwalPenerbangans::class);
+        $component = $test->instance();
+        $filter = $component->getTable()->getFilter('taruna_id');
+
+        $options = $filter->getOptions();
+        $this->assertEmpty($options);
+    }
+
+    public function test_student_filter_options_show_students_matching_selected_batch(): void
+    {
+        $user = User::factory()->create(['role' => 'super_admin']);
+        $this->actingAs($user);
+
+        $tarunaUser1 = User::factory()->create(['role' => 'taruna']);
+        $taruna1 = Taruna::create([
+            'user_id' => $tarunaUser1->id,
+            'nim' => 'TRN-OP-100',
+            'nama' => 'Cadet Batch 100',
+            'batch' => 100,
+            'status' => 'active',
+        ]);
+
+        $tarunaUser2 = User::factory()->create(['role' => 'taruna']);
+        $taruna2 = Taruna::create([
+            'user_id' => $tarunaUser2->id,
+            'nim' => 'TRN-OP-101',
+            'nama' => 'Cadet Batch 101',
+            'batch' => 101,
+            'status' => 'active',
+        ]);
+
+        $test = Livewire::test(ListJadwalPenerbangans::class)
+            ->set('tableDeferredFilters.batch.value', 100);
+
+        $component = $test->instance();
+        $filter = $component->getTable()->getFilter('taruna_id');
+
+        $options = $filter->getOptions();
+        $this->assertArrayHasKey($taruna1->id, $options);
+        $this->assertArrayNotHasKey($taruna2->id, $options);
+    }
 }
