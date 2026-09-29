@@ -9,6 +9,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class LatestJadwalWidget extends BaseWidget
 {
+    protected static bool $isDiscovered = false;
     protected static ?int $sort = 5;
 
     protected static ?string $heading = 'Recent Flight Schedules';

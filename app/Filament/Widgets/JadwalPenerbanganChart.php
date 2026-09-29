@@ -9,6 +9,7 @@ use Filament\Widgets\ChartWidget;
 
 class JadwalPenerbanganChart extends ChartWidget
 {
+    protected static bool $isDiscovered = false;
     protected static ?int $sort = 2;
 
     protected ?string $heading = 'Flight Activity & Hours Trend';

@@ -7,6 +7,7 @@ use Filament\Widgets\ChartWidget;
 
 class StatusPesawatChart extends ChartWidget
 {
+    protected static bool $isDiscovered = false;
     protected static ?int $sort = 3;
 
     protected ?string $heading = 'Aircraft Fleet Readiness';

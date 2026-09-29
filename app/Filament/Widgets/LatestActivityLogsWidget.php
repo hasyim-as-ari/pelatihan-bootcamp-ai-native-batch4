@@ -11,6 +11,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class LatestActivityLogsWidget extends BaseWidget
 {
+    protected static bool $isDiscovered = false;
     protected static ?int $sort = 4;
 
     protected static ?string $heading = 'Activity & Login History';
