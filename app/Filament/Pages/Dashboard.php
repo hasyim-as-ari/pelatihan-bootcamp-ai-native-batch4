@@ -10,14 +10,16 @@ use App\Models\Pesawat;
 use App\Models\Taruna;
 use BackedEnum;
 use Carbon\Carbon;
-use Filament\Pages\Page;
+use Filament\Pages\Dashboard as BaseDashboard;
 
-class Dashboard extends Page
+class Dashboard extends BaseDashboard
 {
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-home';
+
     protected static ?string $navigationLabel = 'Dashboard';
+
     protected static ?string $title = 'Dashboard';
-    protected static string $routePath = '/';
+
     protected static ?int $navigationSort = -2;
 
     protected string $view = 'filament.pages.dashboard';
@@ -65,17 +67,61 @@ class Dashboard extends Page
             $chartLabels[] = $date->format('d M');
             $count = JadwalPenerbangan::whereDate('tanggal', $date->toDateString())->count();
             $hours = (float) FlightLog::whereDate('tanggal', $date->toDateString())->sum('durasi_terbang');
-            if ($hours == 0 && $count > 0) $hours = $count * 1.5;
+            if ($hours == 0 && $count > 0) {
+                $hours = $count * 1.5;
+            }
             $chartJadwal[] = $count;
             $chartHours[] = round($hours, 1);
         }
 
-        // Recent schedules
-        $recentSchedules = JadwalPenerbangan::with(['taruna', 'instruktur', 'pesawat'])
+        $user = auth()->user();
+        $isInstruktur = $user && $user->hasRole('instruktur');
+        $isTaruna = $user && $user->hasRole('taruna');
+
+        // Recent schedules (scoped for instructor and cadet)
+        $schedulesQuery = JadwalPenerbangan::with(['taruna', 'instruktur', 'pesawat'])
             ->latest('tanggal')
-            ->latest('jam_mulai')
-            ->limit(5)
-            ->get();
+            ->latest('jam_mulai');
+
+        if ($isInstruktur && $user->instruktur) {
+            $schedulesQuery->where('instruktur_id', $user->instruktur->id);
+        } elseif ($isTaruna && $user->taruna) {
+            $schedulesQuery->where('taruna_id', $user->taruna->id);
+        }
+
+        $recentSchedules = $schedulesQuery->limit(5)->get();
+
+        // Instruktur specific data
+        $instrukturData = null;
+        if ($isInstruktur && $user->instruktur) {
+            $instrukturData = [
+                'totalTeachingHours' => (float) FlightLog::where('instruktur_id', $user->instruktur->id)->where('status', 'completed')->sum('durasi_terbang') ?: (float) $user->instruktur->total_jam_terbang,
+                'todayFlights' => JadwalPenerbangan::where('instruktur_id', $user->instruktur->id)->whereDate('tanggal', $today)->count(),
+                'activeStudentsCount' => JadwalPenerbangan::where('instruktur_id', $user->instruktur->id)->distinct('taruna_id')->count('taruna_id'),
+                'maxDailyHours' => (float) ($user->instruktur->max_jam_terbang_harian ?? 6.0),
+            ];
+        }
+
+        // Taruna specific data
+        $tarunaData = null;
+        if ($isTaruna && $user->taruna) {
+            $totalTarunaHours = (float) $user->taruna->total_jam_terbang;
+            $quotaTarunaHours = (float) $user->taruna->kuota_jam_terbang;
+            $tarunaData = [
+                'totalHours' => $totalTarunaHours,
+                'quotaHours' => $quotaTarunaHours,
+                'remainingHours' => max(0, $quotaTarunaHours - $totalTarunaHours),
+                'progressPct' => $quotaTarunaHours > 0 ? min(100, round(($totalTarunaHours / $quotaTarunaHours) * 100)) : 0,
+                'nextFlight' => JadwalPenerbangan::with(['instruktur', 'pesawat'])
+                    ->where('taruna_id', $user->taruna->id)
+                    ->whereDate('tanggal', '>=', $today)
+                    ->whereNotIn('status', ['completed', 'cancelled'])
+                    ->orderBy('tanggal')
+                    ->orderBy('jam_mulai')
+                    ->first(),
+                'pendingReschedules' => PengajuanReschedule::where('pemohon_id', $user->id)->where('status', 'pending')->count(),
+            ];
+        }
 
         // Latest activity logs
         $latestActivities = ActivityLog::with('user')
@@ -84,6 +130,11 @@ class Dashboard extends Page
             ->get();
 
         return [
+            'user' => $user,
+            'isInstruktur' => $isInstruktur,
+            'isTaruna' => $isTaruna,
+            'instrukturData' => $instrukturData,
+            'tarunaData' => $tarunaData,
             'today' => now()->format('d M Y'),
             'todaySchedules' => $todaySchedules,
             'inFlight' => $inFlight,

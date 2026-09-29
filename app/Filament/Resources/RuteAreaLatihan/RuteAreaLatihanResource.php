@@ -27,9 +27,11 @@ class RuteAreaLatihanResource extends Resource
 
     protected static ?string $navigationLabel = 'Training Routes';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Master Data';
-    protected static ?int $navigationSort = 5;
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-map-pin';
+    protected static string|\UnitEnum|null $navigationGroup = 'Master Data';
+
+    protected static ?int $navigationSort = 6;
+
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-map-pin';
 
     public static function form(Schema $schema): Schema
     {

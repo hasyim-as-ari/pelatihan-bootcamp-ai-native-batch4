@@ -9,26 +9,26 @@ class PesawatPolicy
 {
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->hasRole('super_admin');
     }
 
     public function view(User $user, Pesawat $pesawat): bool
     {
-        return true;
+        return $user->hasRole('super_admin');
     }
 
     public function create(User $user): bool
     {
-        return $user->isSuperAdmin() || $user->isAdminOperasional();
+        return $user->hasRole('super_admin');
     }
 
     public function update(User $user, Pesawat $pesawat): bool
     {
-        return $user->isSuperAdmin() || $user->isAdminOperasional();
+        return $user->hasRole('super_admin');
     }
 
     public function delete(User $user, Pesawat $pesawat): bool
     {
-        return $user->isSuperAdmin() || $user->isAdminOperasional();
+        return $user->hasRole('super_admin');
     }
 }

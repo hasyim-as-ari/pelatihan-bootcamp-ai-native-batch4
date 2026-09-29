@@ -2,11 +2,12 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use App\Filament\Pages\Dashboard;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -27,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login(\App\Filament\Pages\Auth\Login::class)
+            ->login(Login::class)
             ->brandName('FOAMS - API Banyuwangi')
             ->favicon(asset('images/logo/logo_api.png'))
             ->brandLogo(fn () => view('filament.components.brand-logo'))
@@ -56,11 +57,6 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 NavigationGroup::make('Master Data')
                     ->label('Master Data')
-                    ->collapsible()
-                    ->collapsed(false),
-
-                NavigationGroup::make('Flight Scheduling')
-                    ->label('Flight Scheduling')
                     ->collapsible()
                     ->collapsed(false),
 

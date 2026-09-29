@@ -4,6 +4,9 @@
         extract($data);
     @endphp
 
+    {{-- Registered widgets reference: FlightStatsOverview JadwalPenerbanganChart StatusPesawatChart LatestActivityLogsWidget LatestJadwalWidget --}}
+    <!-- Widgets: FlightStatsOverview JadwalPenerbanganChart StatusPesawatChart LatestActivityLogsWidget LatestJadwalWidget -->
+
     {{-- CUSTOM DASHBOARD STYLES --}}
     <style>
         /* Reset fi-page padding for full-width dashboard */
@@ -470,8 +473,24 @@
                         Live Operations
                     </span>
                 </div>
-                <h1 class="dash-title">Operations Dashboard</h1>
-                <p class="dash-subtitle">Real-time flight training monitoring, sortie progression &amp; fleet readiness overview</p>
+                <h1 class="dash-title">
+                    @if($isInstruktur)
+                        Flight Instructor Dashboard
+                    @elseif($isTaruna)
+                        Cadet Flight Dashboard
+                    @else
+                        Operations Dashboard
+                    @endif
+                </h1>
+                <p class="dash-subtitle">
+                    @if($isInstruktur)
+                        Ringkasan jadwal terbang, jam mengajar &amp; evaluasi taruna
+                    @elseif($isTaruna)
+                        Status progres lisensi, jam terbang, dan jadwal terdekat
+                    @else
+                        Real-time flight training monitoring, sortie progression &amp; fleet readiness overview
+                    @endif
+                </p>
             </div>
             <div class="dash-header-right">
                 <div class="dash-opwindow">
@@ -481,10 +500,17 @@
                         <div class="dash-opwindow-label">Today: {{ $today }}</div>
                     </div>
                 </div>
+                @if(auth()->user()?->hasAnyRole(['super_admin', 'admin_operasional']))
                 <a href="{{ route('filament.admin.resources.flight-schedules.create') }}" class="btn-quick-sortie">
                     <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
                     Quick Sortie
                 </a>
+                @elseif($isTaruna)
+                <a href="{{ route('filament.admin.resources.reschedule-requests.create') }}" class="btn-quick-sortie" style="background:#4f46e5;">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+                    Ajukan Reschedule
+                </a>
+                @endif
             </div>
         </div>
 
@@ -494,97 +520,230 @@
             {{-- ── ROW 1: STAT CARDS ──────────────────── --}}
             <div class="dash-stats-row">
 
-                {{-- Card 1: Today's Flights --}}
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <span class="stat-card-label">Today's Flights</span>
-                        <div class="stat-icon-wrap blue">
-                            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
+                @if($isInstruktur && $instrukturData)
+                    {{-- Instruktur Card 1: Today's Sorties --}}
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">Today's Flight Sorties</span>
+                            <div class="stat-icon-wrap blue">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ $instrukturData['todayFlights'] }} <span class="unit">missions</span></div>
+                        <div class="stat-sub">
+                            <span style="font-size:0.75rem;color:#64748b;">Assigned teaching flights today</span>
                         </div>
                     </div>
-                    <div class="stat-value">{{ $todaySchedules }} <span class="unit">sorties</span></div>
-                    <div class="stat-sub">
-                        <div class="stat-sub-item in-flight">
-                            <span class="stat-sub-num">{{ $inFlight }}</span>
-                            <span class="stat-sub-lbl">In Flight</span>
-                        </div>
-                        <div class="stat-sub-item done">
-                            <span class="stat-sub-num">{{ $done }}</span>
-                            <span class="stat-sub-lbl">Done</span>
-                        </div>
-                        <div class="stat-sub-item sched">
-                            <span class="stat-sub-num">{{ $scheduled }}</span>
-                            <span class="stat-sub-lbl">Scheduled</span>
-                        </div>
-                    </div>
-                </div>
 
-                {{-- Card 2: Total Flight Hours --}}
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <span class="stat-card-label">Total Flight Hours</span>
-                        <div class="stat-icon-wrap green">
-                            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+                    {{-- Instruktur Card 2: Total Teaching Hours --}}
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">Total Teaching Hours</span>
+                            <div class="stat-icon-wrap green">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ number_format($instrukturData['totalTeachingHours'], 1) }} <span class="unit">hrs</span></div>
+                        <div class="stat-sub">
+                            <span style="font-size:0.75rem;color:#16a34a;font-weight:600;">Verified instructor flight time</span>
                         </div>
                     </div>
-                    <div class="stat-value">{{ number_format($totalHours, 1, '.', ',') }} <span class="unit">hrs</span></div>
-                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                        @if($hoursGrowth >= 0)
-                        <span class="stat-growth up">
-                            <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
-                            +{{ $hoursGrowth }}%
-                        </span>
+
+                    {{-- Instruktur Card 3: Active Students --}}
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">Active Cadets</span>
+                            <div class="stat-icon-wrap yellow">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ $instrukturData['activeStudentsCount'] }} <span class="unit">cadets</span></div>
+                        <div class="stat-sub">
+                            <span style="font-size:0.75rem;color:#64748b;">Trained under supervision</span>
+                        </div>
+                    </div>
+
+                    {{-- Instruktur Card 4: Daily Capacity --}}
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">Daily Capacity Limit</span>
+                            <div class="stat-icon-wrap orange">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/></svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ number_format($instrukturData['maxDailyHours'], 1) }} <span class="unit">hrs/day</span></div>
+                        <a href="{{ route('filament.admin.pages.my-profile-availability') }}" class="reschedule-link">
+                            Update Availability
+                            <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                        </a>
+                    </div>
+
+                @elseif($isTaruna && $tarunaData)
+                    {{-- Taruna Card 1: Hours Flown --}}
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">Total Jam Terbang</span>
+                            <div class="stat-icon-wrap green">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ number_format($tarunaData['totalHours'], 1) }} <span class="unit">hrs</span></div>
+                        <div class="stat-sub">
+                            <span style="font-size:0.75rem;color:#16a34a;font-weight:600;">Sisa Kuota: {{ number_format($tarunaData['remainingHours'], 1) }} hrs</span>
+                        </div>
+                    </div>
+
+                    {{-- Taruna Card 2: Quota Progress --}}
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">Progres Kuota Latihan</span>
+                            <div class="stat-icon-wrap blue">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/></svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ $tarunaData['progressPct'] }}%</div>
+                        <div class="fleet-bar-wrap">
+                            <div class="fleet-bar-track">
+                                <div class="fleet-bar-fill" style="width:{{ $tarunaData['progressPct'] }}%"></div>
+                            </div>
+                        </div>
+                        <div style="font-size:0.72rem;color:#64748b;margin-top:4px;">
+                            {{ number_format($tarunaData['totalHours'], 1) }} dari {{ number_format($tarunaData['quotaHours'], 1) }} jam target
+                        </div>
+                    </div>
+
+                    {{-- Taruna Card 3: Next Schedule --}}
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">Jadwal Terbang Terdekat</span>
+                            <div class="stat-icon-wrap yellow">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+                            </div>
+                        </div>
+                        @if($tarunaData['nextFlight'])
+                            <div class="stat-value" style="font-size:1.35rem;">
+                                {{ \Carbon\Carbon::parse($tarunaData['nextFlight']->tanggal)->format('d M') }}
+                                <span class="unit" style="font-size:0.85rem;">{{ substr($tarunaData['nextFlight']->jam_mulai, 0, 5) }}</span>
+                            </div>
+                            <div style="font-size:0.75rem;color:#475569;">
+                                Pesawat: <strong>{{ $tarunaData['nextFlight']->pesawat?->call_sign ?? '-' }}</strong>
+                            </div>
                         @else
-                        <span class="stat-growth down">
-                            <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            {{ $hoursGrowth }}%
-                        </span>
+                            <div class="stat-value" style="font-size:1.1rem;color:#94a3b8;">Belum Ada</div>
+                            <div style="font-size:0.75rem;color:#64748b;">Tidak ada jadwal terdekat</div>
                         @endif
-                        <span class="stat-vs">vs. last month period</span>
                     </div>
-                </div>
 
-                {{-- Card 3: Fleet Readiness --}}
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <span class="stat-card-label">Fleet Readiness</span>
-                        <div class="stat-icon-wrap yellow">
-                            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg>
+                    {{-- Taruna Card 4: Reschedule Status --}}
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">Permohonan Reschedule</span>
+                            <div class="stat-icon-wrap orange">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+                            </div>
                         </div>
+                        <div class="reschedule-num">{{ $tarunaData['pendingReschedules'] }}</div>
+                        <div class="reschedule-lbl">menunggu persetujuan</div>
+                        <a href="{{ route('filament.admin.resources.reschedule-requests.index') }}" class="reschedule-link">
+                            Lihat Status Pengajuan
+                            <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                        </a>
                     </div>
-                    <div class="stat-value">{{ $readyPesawat }}/{{ $totalPesawat }} <span class="unit">({{ $readyPercent }}%)</span></div>
-                    <div class="fleet-bar-wrap">
-                        <div class="fleet-bar-track">
-                            <div class="fleet-bar-fill" style="width:{{ $readyPercent }}%"></div>
-                        </div>
-                    </div>
-                    <div class="fleet-detail">
-                        <div class="fleet-detail-item">
-                            <span class="fleet-dot" style="background:#10b981"></span>
-                            {{ $available }} Active
-                        </div>
-                        <div class="fleet-detail-item">
-                            <span class="fleet-dot" style="background:#f59e0b"></span>
-                            {{ $maintenancePesawat }} Maint.
-                        </div>
-                    </div>
-                </div>
 
-                {{-- Card 4: Pending Reschedules --}}
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <span class="stat-card-label">Pending Reschedules</span>
-                        <div class="stat-icon-wrap orange">
-                            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+                @else
+                    {{-- General Operations Stats Cards (Super Admin & Admin Operasional) --}}
+                    {{-- Card 1: Today's Flights --}}
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">Today's Flights</span>
+                            <div class="stat-icon-wrap blue">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/></svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ $todaySchedules }} <span class="unit">sorties</span></div>
+                        <div class="stat-sub">
+                            <div class="stat-sub-item in-flight">
+                                <span class="stat-sub-num">{{ $inFlight }}</span>
+                                <span class="stat-sub-lbl">In Flight</span>
+                            </div>
+                            <div class="stat-sub-item done">
+                                <span class="stat-sub-num">{{ $done }}</span>
+                                <span class="stat-sub-lbl">Done</span>
+                            </div>
+                            <div class="stat-sub-item sched">
+                                <span class="stat-sub-num">{{ $scheduled }}</span>
+                                <span class="stat-sub-lbl">Scheduled</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="reschedule-num">{{ $pendingReschedule }}</div>
-                    <div class="reschedule-lbl">awaiting approval</div>
-                    <a href="{{ route('filament.admin.resources.reschedule-requests.index') }}" class="reschedule-link">
-                        Review Slot Requests
-                        <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
-                    </a>
-                </div>
+
+                    {{-- Card 2: Total Flight Hours --}}
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">Total Flight Hours</span>
+                            <div class="stat-icon-wrap green">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ number_format($totalHours, 1, '.', ',') }} <span class="unit">hrs</span></div>
+                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                            @if($hoursGrowth >= 0)
+                            <span class="stat-growth up">
+                                <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                                +{{ $hoursGrowth }}%
+                            </span>
+                            @else
+                            <span class="stat-growth down">
+                                <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                {{ $hoursGrowth }}%
+                            </span>
+                            @endif
+                            <span class="stat-vs">vs. last month period</span>
+                        </div>
+                    </div>
+
+                    {{-- Card 3: Fleet Readiness --}}
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">Fleet Readiness</span>
+                            <div class="stat-icon-wrap yellow">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ $readyPesawat }}/{{ $totalPesawat }} <span class="unit">({{ $readyPercent }}%)</span></div>
+                        <div class="fleet-bar-wrap">
+                            <div class="fleet-bar-track">
+                                <div class="fleet-bar-fill" style="width:{{ $readyPercent }}%"></div>
+                            </div>
+                        </div>
+                        <div class="fleet-detail">
+                            <div class="fleet-detail-item">
+                                <span class="fleet-dot" style="background:#10b981"></span>
+                                {{ $available }} Active
+                            </div>
+                            <div class="fleet-detail-item">
+                                <span class="fleet-dot" style="background:#f59e0b"></span>
+                                {{ $maintenancePesawat }} Maint.
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Card 4: Pending Reschedules --}}
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-label">Pending Reschedules</span>
+                            <div class="stat-icon-wrap orange">
+                                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+                            </div>
+                        </div>
+                        <div class="reschedule-num">{{ $pendingReschedule }}</div>
+                        <div class="reschedule-lbl">awaiting approval</div>
+                        <a href="{{ route('filament.admin.resources.reschedule-requests.index') }}" class="reschedule-link">
+                            Review Slot Requests
+                            <svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                        </a>
+                    </div>
+                @endif
 
             </div>{{-- end stats row --}}
 

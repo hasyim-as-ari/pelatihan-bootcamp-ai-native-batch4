@@ -13,8 +13,8 @@ use App\Models\PengajuanReschedule;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class PengajuanRescheduleResource extends Resource
 {
@@ -28,9 +28,19 @@ class PengajuanRescheduleResource extends Resource
 
     protected static ?string $navigationLabel = 'Reschedule Requests';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Flight Operations';
+    public static function getNavigationGroup(): ?string
+    {
+        $user = auth()->user();
+        if ($user && $user->hasRole('taruna')) {
+            return null;
+        }
+
+        return 'Flight Operations';
+    }
+
     protected static ?int $navigationSort = 3;
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-arrow-path';
+
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-arrow-path';
 
     public static function form(Schema $schema): Schema
     {
@@ -54,12 +64,12 @@ class PengajuanRescheduleResource extends Resource
         ];
     }
 
-    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
-        
+
         $user = auth()->user();
-        
+
         if ($user->isSuperAdmin() || $user->isAdminOperasional() || $user->isPimpinan()) {
             return $query;
         }
@@ -77,6 +87,3 @@ class PengajuanRescheduleResource extends Resource
         ];
     }
 }
-
-
-

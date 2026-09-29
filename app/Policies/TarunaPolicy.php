@@ -9,26 +9,26 @@ class TarunaPolicy
 {
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->hasRole('super_admin');
     }
 
     public function view(User $user, Taruna $taruna): bool
     {
-        return true;
+        return $user->hasRole('super_admin') || ($user->hasRole('taruna') && $taruna->user_id === $user->id);
     }
 
     public function create(User $user): bool
     {
-        return $user->isSuperAdmin() || $user->isAdminOperasional();
+        return $user->hasRole('super_admin');
     }
 
     public function update(User $user, Taruna $taruna): bool
     {
-        return $user->isSuperAdmin() || $user->isAdminOperasional();
+        return $user->hasRole('super_admin');
     }
 
     public function delete(User $user, Taruna $taruna): bool
     {
-        return $user->isSuperAdmin() || $user->isAdminOperasional();
+        return $user->hasRole('super_admin');
     }
 }

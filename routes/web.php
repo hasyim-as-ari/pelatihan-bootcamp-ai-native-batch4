@@ -18,6 +18,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         ->name('dashboard.chart-data');
 });
 
+// Dashboard redirect
+Route::redirect('/admin/dashboard', '/admin');
+
 // Legacy Indonesian URL redirects to new English URLs
 Route::redirect('/admin/instruktur/instrukturs', '/admin/instructors');
 Route::redirect('/admin/taruna/tarunas', '/admin/students');

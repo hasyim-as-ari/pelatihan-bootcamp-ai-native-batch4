@@ -13,8 +13,8 @@ use App\Models\JadwalPenerbangan;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class JadwalPenerbanganResource extends Resource
 {
@@ -26,11 +26,29 @@ class JadwalPenerbanganResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Flight Schedules';
 
-    protected static ?string $navigationLabel = 'Flight Schedules';
+    public static function getNavigationLabel(): string
+    {
+        $user = auth()->user();
+        if ($user && $user->hasRole('taruna')) {
+            return 'My Flight Schedules';
+        }
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Flight Operations';
+        return 'Flight Schedules';
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        $user = auth()->user();
+        if ($user && ($user->hasRole('taruna') || $user->hasRole('instruktur'))) {
+            return null;
+        }
+
+        return 'Flight Operations';
+    }
+
     protected static ?int $navigationSort = 1;
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-calendar-days';
+
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
 
     public static function form(Schema $schema): Schema
     {
@@ -54,12 +72,12 @@ class JadwalPenerbanganResource extends Resource
         ];
     }
 
-    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
-        
+
         $user = auth()->user();
-        
+
         if ($user->isSuperAdmin() || $user->isAdminOperasional() || $user->isPimpinan()) {
             return $query;
         }
@@ -89,6 +107,3 @@ class JadwalPenerbanganResource extends Resource
         ];
     }
 }
-
-
-

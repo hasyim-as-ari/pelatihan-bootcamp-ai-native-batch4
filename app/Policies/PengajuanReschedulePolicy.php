@@ -9,12 +9,12 @@ class PengajuanReschedulePolicy
 {
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->hasAnyRole(['super_admin', 'admin_operasional', 'taruna']);
     }
 
     public function view(User $user, PengajuanReschedule $pengajuan): bool
     {
-        if ($user->isSuperAdmin() || $user->isAdminOperasional() || $user->isPimpinan()) {
+        if ($user->hasRole('super_admin') || $user->hasRole('admin_operasional') || $user->isPimpinan()) {
             return true;
         }
 
@@ -23,7 +23,7 @@ class PengajuanReschedulePolicy
 
     public function create(User $user): bool
     {
-        return $user->isInstruktur() || $user->isTaruna() || $user->isSuperAdmin() || $user->isAdminOperasional();
+        return $user->hasAnyRole(['super_admin', 'admin_operasional', 'taruna']);
     }
 
     public function update(User $user, PengajuanReschedule $pengajuan): bool

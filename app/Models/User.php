@@ -4,22 +4,24 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'email', 'password', 'role', 'avatar', 'is_active'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, HasRoles, Notifiable;
 
     /**
      * Cek apakah user boleh mengakses Filament panel.
@@ -84,11 +86,31 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * Booted event to auto-sync Spatie role with role attribute.
+     */
+    protected static function booted(): void
+    {
+        static::saved(function (User $user) {
+            if ($user->role && method_exists($user, 'syncRoles')) {
+                try {
+                    Role::firstOrCreate([
+                        'name' => $user->role,
+                        'guard_name' => 'web',
+                    ]);
+                    $user->syncRoles([$user->role]);
+                } catch (\Throwable $e) {
+                    // Fail gracefully if roles table not yet migrated
+                }
+            }
+        });
+    }
+
+    /**
      * Cek apakah user adalah Super Admin
      */
     public function isSuperAdmin(): bool
     {
-        return $this->role === 'super_admin';
+        return $this->hasRole('super_admin') || $this->role === 'super_admin';
     }
 
     /**
@@ -96,7 +118,7 @@ class User extends Authenticatable implements FilamentUser
      */
     public function isAdminOperasional(): bool
     {
-        return $this->role === 'admin_operasional';
+        return $this->hasRole('admin_operasional') || $this->role === 'admin_operasional';
     }
 
     /**
@@ -104,7 +126,7 @@ class User extends Authenticatable implements FilamentUser
      */
     public function isInstruktur(): bool
     {
-        return $this->role === 'instruktur';
+        return $this->hasRole('instruktur') || $this->role === 'instruktur';
     }
 
     /**
@@ -112,7 +134,7 @@ class User extends Authenticatable implements FilamentUser
      */
     public function isTaruna(): bool
     {
-        return $this->role === 'taruna';
+        return $this->hasRole('taruna') || $this->role === 'taruna';
     }
 
     /**
@@ -120,7 +142,7 @@ class User extends Authenticatable implements FilamentUser
      */
     public function isPimpinan(): bool
     {
-        return $this->role === 'pimpinan';
+        return $this->hasRole('pimpinan') || $this->role === 'pimpinan';
     }
 
     /**

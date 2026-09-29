@@ -8,6 +8,7 @@ use App\Models\JadwalPenerbangan;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class FlightHoursReportResource extends Resource
 {
@@ -27,15 +28,62 @@ class FlightHoursReportResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
 
-    public static function canCreate(): bool { return false; }
-    public static function canEdit($record): bool { return false; }
-    public static function canDelete($record): bool { return false; }
-
-    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    public static function canViewAny(): bool
     {
-        return parent::getEloquentQuery()
+        $user = auth()->user();
+
+        return $user && $user->hasAnyRole(['super_admin', 'admin_operasional', 'taruna', 'pimpinan']);
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canEdit($record): bool
+    {
+        return false;
+    }
+
+    public static function canDelete($record): bool
+    {
+        return false;
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        $user = auth()->user();
+        if ($user && $user->hasRole('taruna')) {
+            return 'Training Progress / Reports';
+        }
+
+        return 'Flight Hours Reports';
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        $user = auth()->user();
+        if ($user && $user->hasRole('taruna')) {
+            return null;
+        }
+
+        return 'Reports & History';
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery()
             ->where('status', 'completed')
             ->with(['taruna', 'instruktur', 'pesawat', 'flightLog']);
+
+        $user = auth()->user();
+        if ($user && $user->hasRole('taruna')) {
+            $query->whereHas('taruna', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+        }
+
+        return $query;
     }
 
     public static function table(Table $table): Table
@@ -43,7 +91,10 @@ class FlightHoursReportResource extends Resource
         return FlightHoursReportsTable::configure($table);
     }
 
-    public static function getRelations(): array { return []; }
+    public static function getRelations(): array
+    {
+        return [];
+    }
 
     public static function getPages(): array
     {

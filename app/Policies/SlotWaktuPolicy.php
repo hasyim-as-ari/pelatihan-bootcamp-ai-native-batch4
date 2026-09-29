@@ -9,26 +9,26 @@ class SlotWaktuPolicy
 {
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->hasRole('super_admin');
     }
 
     public function view(User $user, SlotWaktu $slotWaktu): bool
     {
-        return true;
+        return $user->hasRole('super_admin');
     }
 
     public function create(User $user): bool
     {
-        return $user->isSuperAdmin() || $user->isAdminOperasional();
+        return $user->hasRole('super_admin');
     }
 
     public function update(User $user, SlotWaktu $slotWaktu): bool
     {
-        return $user->isSuperAdmin() || $user->isAdminOperasional();
+        return $user->hasRole('super_admin');
     }
 
     public function delete(User $user, SlotWaktu $slotWaktu): bool
     {
-        return $user->isSuperAdmin() || $user->isAdminOperasional();
+        return $user->hasRole('super_admin');
     }
 }

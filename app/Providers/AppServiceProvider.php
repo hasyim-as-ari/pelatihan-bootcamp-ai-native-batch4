@@ -4,11 +4,13 @@ namespace App\Providers;
 
 use App\Models\ActivityLog;
 use App\Models\LoginHistory;
+use App\Models\User;
+use BezhanSalleh\LanguageSwitch\LanguageSwitch;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use BezhanSalleh\LanguageSwitch\LanguageSwitch;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +27,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Implicitly grant 'super_admin' role all permissions
+        Gate::before(function ($user, $ability) {
+            if ($user instanceof User) {
+                return ($user->hasRole('super_admin') || $user->role === 'super_admin') ? true : null;
+            }
+
+            return null;
+        });
+
         LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
             $switch
                 ->locales(['en', 'id'])
@@ -39,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
                     userId: $event->user->getAuthIdentifier(),
                     actionType: 'LOGIN',
                     moduleName: 'Authentication',
-                    description: 'User ' . ($event->user->name ?? 'User') . ' (' . ($event->user->email ?? '') . ') logged in successfully',
+                    description: 'User '.($event->user->name ?? 'User').' ('.($event->user->email ?? '').') logged in successfully',
                     ipAddress: request()?->ip() ?? '127.0.0.1',
                     userAgent: request()?->userAgent() ?? 'Browser'
                 );
@@ -58,7 +69,7 @@ class AppServiceProvider extends ServiceProvider
                     userId: $event->user->getAuthIdentifier(),
                     actionType: 'LOGOUT',
                     moduleName: 'Authentication',
-                    description: 'Pengguna ' . ($event->user->name ?? 'User') . ' (' . ($event->user->email ?? '') . ') keluar dari sistem',
+                    description: 'Pengguna '.($event->user->name ?? 'User').' ('.($event->user->email ?? '').') keluar dari sistem',
                     ipAddress: request()?->ip() ?? '127.0.0.1',
                     userAgent: request()?->userAgent() ?? 'Browser'
                 );

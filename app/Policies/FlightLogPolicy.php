@@ -9,7 +9,7 @@ class FlightLogPolicy
 {
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->hasAnyRole(['super_admin', 'admin_operasional', 'instruktur', 'pimpinan']);
     }
 
     public function view(User $user, FlightLog $log): bool
